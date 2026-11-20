@@ -1,0 +1,12 @@
+*.py[cod]
+.env
+.env.*
+.ipynb_checkpoints/
+.venv/
+.vscode/
+__pycache__/
+venv/
+*$py.class
+*.egg-info/
+dist/
+build/

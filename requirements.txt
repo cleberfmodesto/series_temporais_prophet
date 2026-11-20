@@ -1,0 +1,9 @@
+ipykernel
+matplotlib
+nbformat
+numpy
+pandas
+plotly
+prophet
+scikit-learn
+streamlit
