@@ -7,3 +7,4 @@ plotly
 prophet
 scikit-learn
 streamlit
+tenacity
