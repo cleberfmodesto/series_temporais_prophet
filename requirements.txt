@@ -2,7 +2,7 @@ ipykernel
 matplotlib
 nbformat
 numpy
-pandas
+pandas<2.0.0
 plotly
 prophet
 scikit-learn

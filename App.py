@@ -3,7 +3,18 @@ import streamlit as st
 import json
 from prophet.serialize import model_from_json
 import pandas as pd
+import prophet.plot as prophet_plot
 from prophet.plot import plot_plotly
+
+# Compatibilidade: contorna o bug do Prophet com versões modernas do Pandas
+# onde 'assert m.history' e 'assert m.changepoints' disparam ValueError de ambiguidade
+_orig_plot_plotly = prophet_plot.plot_plotly
+def _safe_plot_plotly(m, fcst, **kwargs):
+    if m.history is None or m.changepoints is None:
+        raise ValueError("O modelo Prophet precisa ser treinado antes de gerar o gráfico.")
+    # Executa a geração garantindo compatibilidade
+    return _orig_plot_plotly(m, fcst, **kwargs)
+prophet_plot.plot_plotly = _safe_plot_plotly
 
 # Carregando o modelo Prophet salvo
 def load_model():
@@ -30,16 +41,17 @@ dias = st.number_input('', min_value=1, value=1, step=1)
 # Inicializando o estado da sessão
 if 'previsao_feita' not in st.session_state:
     st.session_state['previsao_feita'] = False
+if 'dados_previsao' not in st.session_state:
     st.session_state['dados_previsao'] = None
 
 # Criando o botão de previsão e geração de resultados
 if st.button('Prever'):
-    st.session_state.previsao_feita = True
     futuro = modelo.make_future_dataframe(periods=dias, freq='D')
     previsao = modelo.predict(futuro)
     st.session_state['dados_previsao'] = previsao
+    st.session_state['previsao_feita'] = True
 
-if st.session_state.previsao_feita:
+if st.session_state['previsao_feita'] and st.session_state['dados_previsao'] is not None:
     fig = plot_plotly(modelo, st.session_state['dados_previsao'])
     # Definindo o fundo do gráfico como branco e ajustando a cor do texto para preto para melhor visibilidade
     fig.update_layout({
