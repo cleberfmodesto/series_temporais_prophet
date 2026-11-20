@@ -8,3 +8,4 @@ prophet
 scikit-learn
 streamlit
 tenacity
+ipywidgets
